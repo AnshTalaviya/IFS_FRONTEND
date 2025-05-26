@@ -327,6 +327,7 @@ const Calculator = () => {
     } catch (err) {
       alert("Error submitting form");
     }
+    setInvestmentStep(4)
   };
 
   const handleViewInvestments = () => {
