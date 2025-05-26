@@ -179,7 +179,7 @@ const Calculator = () => {
     // Investment Preferences
     investmentPreferences: {
       investmentPlan: "quarterly",
-      investmentAmount: "10000",
+      investmentAmount: 10000,
       investmentTenure: "1 Year (4 Quarters)",
       nomineeName: "",
       relationship: "",
@@ -327,7 +327,7 @@ const Calculator = () => {
     } catch (err) {
       alert("Error submitting form");
     }
-    setInvestmentStep(4)
+    
   };
 
   const handleViewInvestments = () => {
