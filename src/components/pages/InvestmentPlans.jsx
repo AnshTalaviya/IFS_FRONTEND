@@ -2,15 +2,6 @@ import { ArrowForwardOutlined, KeyboardArrowDownOutlined, KeyboardArrowUpOutline
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 
-const tblData = [
-    ['Minimum Investment', '₹10,000', '₹10,000', '₹5,000'],
-    ['Return Rate', '6% quarterly', '6% quarterly', '5% quarterly'],
-    ['Annual Return', 'Up to 26.25%', 'Up to 26.25%', 'Up to 21.55%'],
-    ['Family Distribution', 'No', 'Yes (70:30)', 'Optional'],
-    ['Profit Withdrawal', 'Quarterly', 'Quarterly', 'Quarterly/Annually'],
-    ['Reinvestment Option', 'Yes', 'Yes', 'Yes'],
-    ['Lock-in Period', '3 months', '3 months', '6 months'],
-]
 
 const plans = [
     {
@@ -157,178 +148,138 @@ const plans = [
 
 function InvestmentPlans() {
 
-    const [expandedItems, setExpandedItems] = useState({});
-
-    const toggleExpand = (index) => {
-        setExpandedItems((prev) => ({
-            ...prev,
-            [index]: !prev[index],
-        }));
-    };
+    const [activeIndex, setActiveIndex] = useState(0); // default: first card
 
     return (
         <>
-            <section className="bg-teal-900 text-white py-16 px-4 text-center">
-                <h1 className="text-3xl md:text-5xl font-bold mb-4">Investment Plans</h1>
-                <p className="text-base md:text-lg max-w-2xl mx-auto">
-                    Choose from our range of investment options designed to meet your financial goals and secure your future.
-                </p>
-            </section>
-
-            <section className="pattern-dots px-4 pt-14 pb-16">
-                <h2 className="text-3xl md:text-4xl font-bold text-teal-900 text-center mb-6">Our Investment Solutions</h2>
-                <p className="text-center text-gray-600 max-w-xl mx-auto mb-10">
-                    At MSV Infotech, we offer carefully designed investment plans that provide security, growth, and family benefits.
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto">
+            <div className="max-w-4xl mx-auto">
+                {/* Tab Titles */}
+                <div className="flex justify-center gap-4 mb-6 flex-wrap">
                     {plans.map((plan, idx) => (
-                        <div key={idx} className={`rounded-xl shadow-md px-6 pt-8 pb-6 ${plan.color} relative`}>
-                            <div className={`absolute top-0 left-0 w-full h-2 ${plan.buttonColor} rounded-t-xl`}></div>
-
-                            <span className="bg-yellow-600 text-white text-xs absolute top-3 right-2 px-2 py-1 mb-1 rounded">
-                                POPULAR
-                            </span>
-
-                            <h3 className={`${plan.featuresColor} text-2xl font-bold mb-4`}>{plan.title}</h3>
-                            <p className="text-gray-700 mb-6">{plan.description}</p>
-                            <ul className="text-gray-700 space-y-3 mb-8">
-                                {plan.features.map((feat, i) => (
-                                    <li key={i} className="flex items-start gap-2">
-                                        <TaskAltOutlined className={`${plan.featuresColor}`} /> <span>{feat}</span>
-                                    </li>
-                                ))}
-                            </ul>
-
-                            <button
-                                onClick={() => toggleExpand(idx)}
-                                className="text-dark px-4 py-2 border border-solid border-gray-300 hover:bg-yellow-600 hover:text-white mb-3 rounded w-full flex justify-between items-center cursor-pointer"
-                            >
-                                {expandedItems[idx] ? (
-                                    <span className='mx-auto'>Show Less <KeyboardArrowUpOutlined /></span>
-                                ) : (
-                                    <span className='mx-auto'>Learn More <KeyboardArrowDownOutlined /></span>
-                                )}
-                            </button>
-
-                            <Link
-                                to="/calculator"
-                                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                            >
-                                <button className={`${plan.buttonColor} text-white px-4 py-2 rounded w-full cursor-pointer`}>
-                                    Start Investing
-                                </button>
-                            </Link>
-
-                            {expandedItems[idx] && (
-                                <div className="text-sm text-dark mb-4">
-                                    <hr className='my-6' />
-                                    <h3 className={`text-lg font-bold mb-4`}>{plan.title2}</h3>
-                                    <p className="text-gray-700 mb-6 text-base">{plan.description2}</p>
-                                    <h3 className={`text-lg font-bold mb-4`}>{plan.title3}</h3>
-                                    <ul className="text-gray-700 space-y-3 mb-8">
-                                        {plan.features2.map((feat, i) => (
-                                            <li key={i} className="flex items-start gap-2">
-                                                <TaskAltOutlined className={`${plan.featuresColor} text-base`} /> <span className='text-base'>{feat}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                    <h3 className={`text-lg font-bold mb-4`}>{plan.title4}</h3>
-                                    <ul className="text-gray-700 space-y-3 mb-8">
-                                        {plan.features3.map((feat, i) => (
-                                            <li key={i} className="flex items-start gap-2">
-                                                <TaskAltOutlined className={`${plan.featuresColor} text-base`} /> <span className='text-base'>{feat}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                    <h3 className={`text-lg font-bold mb-4`}>{plan.title5}</h3>
-                                    <ul className="text-gray-700 space-y-3 mb-8">
-                                        {plan.features4.map((feat, i) => (
-                                            <li key={i} className="flex items-start gap-2">
-                                                <span className={`font-bold text-base`}>{i + 1}.</span>
-                                                <span className='text-base'>{feat}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                    <h3 className={`text-lg font-bold mb-6`}>{plan.title6}</h3>
-                                    <p className="text-dark mb-2 text-base font-semibold">{plan.que}</p>
-                                    <p className="text-gray-700 mb-4 text-base">{plan.description3}</p>
-                                    <p className="text-dark mb-2 text-base font-semibold">{plan.que2}</p>
-                                    <p className="text-gray-700 mb-4 text-base">{plan.description4}</p>
-                                    <p className="text-dark mb-2 text-base font-semibold">{plan.que3}</p>
-                                    <p className="text-gray-700 mb-4 text-base">{plan.description5}</p>
-
-                                    <button className={`${plan.buttonColor} text-white mt-3 px-4 py-2 rounded w-full cursor-pointer`}>
-                                        Start Investing <ArrowForwardOutlined />
-                                    </button>
-                                </div>
-                            )}
-                        </div>
+                        <button
+                            key={idx}
+                            className={`px-4 py-2 rounded font-semibold transition-all duration-200 border 
+                            ${idx === activeIndex ? `${plan.buttonColor} text-white` : 'border-gray-300 text-gray-700 bg-white'}
+                        `}
+                            onClick={() => setActiveIndex(idx)}
+                        >
+                            {plan.title}
+                        </button>
                     ))}
                 </div>
-            </section>
 
-            <section className="pattern-zigzag py-16">
-                <div className="max-w-4xl mx-auto">
-                    <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 text-teal-900">Plan Comparison</h2>
-                    <div className="overflow-x-auto">
-                        <table className="border-0 min-w-full border-gray-200 text-center text-sm md:text-base">
-                            <thead>
-                                <tr className="bg-teal-900 text-white">
-                                    <th className="p-4 text-left">Features</th>
-                                    <th className="p-4">Quarterly Compounding</th>
-                                    <th className="p-4">Tree Family Plan</th>
-                                    <th className="p-4">Systematic Investment</th>
-                                </tr>
-                            </thead>
-                            <tbody className="text-gray-700">
-                                {tblData.map(([feature, col1, col2, col3], idx) => {
-                                    const isTransparent = idx % 2 !== 0;
-                                    return (
-                                        <tr
-                                            key={idx}
-                                            className={`border-b border-gray-200 ${isTransparent ? 'bg-white' : 'bg-transparent'}`}
-                                        >
-                                            <td className={`p-4 font-semibold text-left ${isTransparent ? 'bg-white' : 'bg-transparent'}`}>
-                                                {feature}
-                                            </td>
-                                            <td className="p-4">{col1}</td>
-                                            <td className="p-4">{col2}</td>
-                                            <td className="p-4">{col3}</td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
 
-            <section className='py-16'>
-                <div className="text-center max-w-3xl mx-auto">
-                    <h2 className="text-3xl md:text-4xl font-bold text-teal-900 mb-6">
-                        Calculate Your Returns
-                    </h2>
-                    <p className="text-gray-600 mb-8">
-                        Use our investment calculator to see how your money can grow with MSV Infotech's quarterly compounding model.
-                    </p>
-                    <Link
-                        to="/calculator"
-                        onClick={() => setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50)} // small delay to ensure page is ready
-                        className="border hover:scale-105 hover:bg-teal-800 px-6 py-2 rounded-md font-semibold bg-teal-900 text-white transition inline-flex items-center justify-center gap-2"
+                {/* Only Active Card */}
+                <div className="transition-all duration-300">
+                    <div
+                        className={`rounded-xl shadow-md px-6 pt-8 pb-6 ${plans[activeIndex].color} relative transition-transform hover:shadow-2xl hover:scale-[1.025]`}
+                        style={{ border: '1.5px solid #e0e7ef' }}
                     >
-                        Try Our Calculator
-                        <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                        >
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </Link>
+                        <div className={`absolute top-0 left-0 w-full h-2 ${plans[activeIndex].buttonColor} rounded-t-xl`}></div>
+
+                        <span className="bg-yellow-500 text-white text-xs absolute top-3 right-2 px-3 py-1 rounded-full shadow font-bold tracking-wide border border-yellow-400">
+                            <span className="drop-shadow">POPULAR</span>
+                        </span>
+
+                        <h3 className={`${plans[activeIndex].featuresColor} text-2xl font-bold mb-4`}>{plans[activeIndex].title}</h3>
+                        <p className="text-gray-700 mb-6">{plans[activeIndex].description}</p>
+
+                        {/* Features */}
+                        <ul className="text-gray-700 space-y-3 mb-8">
+                            {plans[activeIndex].features.map((feat, i) => (
+                                <li key={i} className="flex items-start gap-2">
+                                    <TaskAltOutlined className={`${plans[activeIndex].featuresColor}`} /> <span>{feat}</span>
+                                </li>
+                            ))}
+                        </ul>
+
+                        <hr className='my-6' />
+
+                        <div>
+                            <h3 className={"text - lg font-bold mb-4"}>{plans[activeIndex].title2}</h3>
+                        <p className="text-gray-700 mb-6 text-base">{plans[activeIndex].description2}</p>
+                    </div>
+                    <div className="text-sm text-dark mb-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <h3 className={"text - lg font-bold mb-4"}>{plans[activeIndex].title3}</h3>
+                        <ul className="text-gray-700 space-y-3 mb-8">
+                            {plans[activeIndex].features2.map((feat, i) => (
+                                <li key={i} className="flex items-start gap-2">
+                                    <TaskAltOutlined className={`${plans[activeIndex].featuresColor} text-base`} /> <span className='text-base'>{feat}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 className={"text - lg font-bold mb-4"}>{plans[activeIndex].title4}</h3>
+                    <ul className="text-gray-700 space-y-3 mb-8">
+                        {plans[activeIndex].features3.map((feat, i) => (
+                            <li key={i} className="flex items-start gap-2">
+                                <TaskAltOutlined className={`${plans[activeIndex].featuresColor} text-base`} /> <span className='text-base'>{feat}</span>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
-            </section>
+                <div>
+                    <h3 className={"text - lg font-bold mb-4"}>{plans[activeIndex].title5}</h3>
+                <ul className="text-gray-700 space-y-3 mb-8">
+                    {plans[activeIndex].features4.map((feat, i) => (
+                        <li key={i} className="flex items-center gap-3">
+                            <span className="flex items-center justify-center bg-gray-100 text-black font-bold rounded-full w-7 h-7 text-base shadow">{i + 1}.</span>
+                            <span className='text-base'>{feat}</span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            <div>
+                <h3 className={"text - lg font-bold mb-6"}>{plans[activeIndex].title6}</h3>
+                <p className="text-dark mb-2 text-base font-semibold">{plans[activeIndex].que}</p>
+                <p className="text-gray-700 mb-4 text-base">{plans[activeIndex].description3}</p>
+                <p className="text-dark mb-2 text-base font-semibold">{plans[activeIndex].que2}</p>
+                <p className="text-gray-700 mb-4 text-base">{plans[activeIndex].description4}</p>
+                <p className="text-dark mb-2 text-base font-semibold">{plans[activeIndex].que3}</p>
+                <p className="text-gray-700 mb-4 text-base">{plans[activeIndex].description5}</p>
+            </div >
+        </div >
+
+            <div className='flex flex-col items-center'>
+                <button
+                    className={`${plans[activeIndex].buttonColor} text-white mt-3 px-4 py-2 rounded w-3/4 font-semibold shadow transition-all duration-200 hover:${plans[activeIndex].buttonhover} hover:scale-105`}
+                >
+                    Start Investing <ArrowForwardOutlined />
+                </button>
+            </div>
+                    </div >
+
+                </div >
+            </div >
+
+        <section className='py-16'>
+            <div className="text-center max-w-3xl mx-auto">
+                <h2 className="text-3xl md:text-4xl font-bold text-teal-900 mb-6">
+                    Calculate Your Returns
+                </h2>
+                <p className="text-gray-600 mb-8">
+                    Use our investment calculator to see how your money can grow with MSV Infotech's quarterly compounding model.
+                </p>
+                <Link
+                    to="/calculator"
+                    onClick={() => setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50)} // small delay to ensure page is ready
+                    className="border hover:scale-105 hover:bg-teal-800 px-6 py-2 rounded-md font-semibold bg-teal-900 text-white transition inline-flex items-center justify-center gap-2"
+                >
+                    Try Our Calculator
+                    <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </Link>
+            </div>
+        </section>
         </>
 
     );
