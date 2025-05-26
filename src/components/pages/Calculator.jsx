@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { CheckCircle, Upload } from "lucide-react"
+import submitCompleteFormApi from "../../api/submitCompleteFormApi"
 
 const AnimatedChart = ({ className = "" }) => {
   const canvasRef = useRef(null)
@@ -163,30 +164,36 @@ const Calculator = () => {
   const [investmentStep, setInvestmentStep] = useState(1) // 1: Personal Details, 2: Investment Preferences, 3: Bank & KYC Details, 4: Success
   const [formData, setFormData] = useState({
     // Personal Details
-    fullName: "",
-    dateOfBirth: "",
-    panNumber: "",
-    email: "",
-    mobile: "",
-    address: "",
-    city: "",
-    state: "",
-    pinCode: "",
+    personalDetails: {
+      fullName: "",
+      dob: "",
+      pan: "",
+      email: "",
+      mobile: "",
+      address: "",
+      city: "",
+      state: "",
+      pinCode: "",
+    },
 
     // Investment Preferences
-    investmentPlan: "quarterly",
-    investmentAmount: 10000,
-    investmentTenure: "1 Year (4 Quarters)",
-    nomineeName: "",
-    relationship: "",
+    investmentPreferences: {
+      investmentPlan: "quarterly",
+      investmentAmount: "10000",
+      investmentTenure: "1 Year (4 Quarters)",
+      nomineeName: "",
+      relationship: "",
+    },
 
     // Bank & KYC Details
-    bankAccountNumber: "",
-    confirmAccountNumber: "",
-    ifscCode: "",
-    accountType: "savings",
-    idProof: null,
-    addressProof: null,
+    kycDetails: {
+      bankAccountNumber: "",
+      confirmAccountNumber: "",
+      ifscCode: "",
+      accountType: "savings",
+      idProof: null,
+      addressProof: null,
+    }
   })
 
   // Calculate returns based on 6% quarterly compounding
@@ -264,23 +271,32 @@ const Calculator = () => {
     setInvestmentStep(1)
   }
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData({
-      ...formData,
-      [name]: value,
-    })
-  }
+  const handleInputChange = (e, section) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [section]: {
+        ...prevData[section],
+        [name]: name === "investmentAmount" ? Number(value) : value,
+      },
+    }));
+  };
 
-  const handleFileUpload = (e, fieldName) => {
-    const file = e.target.files[0]
+
+  const handleFileUpload = (e, section, fieldName) => {
+    const file = e.target.files[0];
     if (file) {
-      setFormData({
-        ...formData,
-        [fieldName]: file,
-      })
+      setFormData((prevData) => ({
+        ...prevData,
+        [section]: {
+          ...prevData[section],
+          [fieldName]: file,
+        },
+      }));
     }
-  }
+
+  };
+
 
   const handleNextStep = () => {
     setInvestmentStep(investmentStep + 1)
@@ -290,9 +306,28 @@ const Calculator = () => {
     setInvestmentStep(investmentStep - 1)
   }
 
-  const handleSubmitInvestment = () => {
-    setInvestmentStep(4)
-  }
+  const handleSubmitInvestment = async () => {
+    const data = new FormData();
+
+    Object.entries(formData.personalDetails).forEach(([key, value]) => {
+      data.append(`personalDetails.${key}`, value);
+    });
+
+    Object.entries(formData.investmentPreferences).forEach(([key, value]) => {
+      data.append(`investmentPreferences.${key}`, value);
+    });
+
+    Object.entries(formData.kycDetails).forEach(([key, value]) => {
+      data.append(`kycDetails.${key}`, value);
+    });
+
+    try {
+      await submitCompleteFormApi.submitCompleteForm(data);
+      alert("Form submitted successfully");
+    } catch (err) {
+      alert("Error submitting form");
+    }
+  };
 
   const handleViewInvestments = () => {
     // Reset to calculator view
@@ -395,7 +430,7 @@ const Calculator = () => {
                       }`}
                     onClick={() => handleAmountButtonClick(1000000)}>
                     ₹10 Lakhs
-                  </button> 
+                  </button>
                 </div>
 
                 <div className="relative">
@@ -479,8 +514,8 @@ const Calculator = () => {
               <div className="flex space-x-4 mb-4 border-b border-gray-200">
                 <button
                   className={`pb-2 text-sm font-medium hover:text-[#d4af37] transition-colors ${activeDetailTab === "summary"
-                      ? "text-[#004d40] border-b-2 border-[#004d40] hover:border-[#d4af37]"
-                      : "text-gray-500"
+                    ? "text-[#004d40] border-b-2 border-[#004d40] hover:border-[#d4af37]"
+                    : "text-gray-500"
                     }`}
                   onClick={() => setActiveDetailTab("summary")}
                 >
@@ -488,8 +523,8 @@ const Calculator = () => {
                 </button>
                 <button
                   className={`pb-2 text-sm font-medium hover:text-[#d4af37] transition-colors ${activeDetailTab === "details"
-                      ? "text-[#004d40] border-b-2 border-[#004d40] hover:border-[#d4af37]"
-                      : "text-gray-500"
+                    ? "text-[#004d40] border-b-2 border-[#004d40] hover:border-[#d4af37]"
+                    : "text-gray-500"
                     }`}
                   onClick={() => setActiveDetailTab("details")}
                 >
@@ -497,8 +532,8 @@ const Calculator = () => {
                 </button>
                 <button
                   className={`pb-2 text-sm font-medium hover:text-[#d4af37] transition-colors ${activeDetailTab === "chart"
-                      ? "text-[#004d40] border-b-2 border-[#004d40] hover:border-[#d4af37]"
-                      : "text-gray-500"
+                    ? "text-[#004d40] border-b-2 border-[#004d40] hover:border-[#d4af37]"
+                    : "text-gray-500"
                     }`}
                   onClick={() => setActiveDetailTab("chart")}
                 >
@@ -768,8 +803,8 @@ const Calculator = () => {
                       <input
                         type="text"
                         name="fullName"
-                        value={formData.fullName}
-                        onChange={handleInputChange}
+                        value={formData.personalDetails.fullName}
+                        onChange={(e) => handleInputChange(e, "personalDetails")}
                         className="w-full p-2 border border-gray-300 rounded-md"
                       />
                     </div>
@@ -777,9 +812,9 @@ const Calculator = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
                       <input
                         type="date"
-                        name="dateOfBirth"
-                        value={formData.dateOfBirth}
-                        onChange={handleInputChange}
+                        name="dob"
+                        value={formData.personalDetails.dob}
+                        onChange={(e) => handleInputChange(e, "personalDetails")}
                         className="w-full p-2 border border-gray-300 rounded-md"
                         placeholder="dd-mm-yyyy"
                       />
@@ -791,9 +826,9 @@ const Calculator = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">PAN Number</label>
                       <input
                         type="text"
-                        name="panNumber"
-                        value={formData.panNumber}
-                        onChange={handleInputChange}
+                        name="pan"
+                        value={formData.personalDetails.pan}
+                        onChange={(e) => handleInputChange(e, "personalDetails")}
                         className="w-full p-2 border border-gray-300 rounded-md"
                         placeholder="ABCDE1234F"
                       />
@@ -803,8 +838,8 @@ const Calculator = () => {
                       <input
                         type="email"
                         name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
+                        value={formData.personalDetails.email}
+                        onChange={(e) => handleInputChange(e, "personalDetails")}
                         className="w-full p-2 border border-gray-300 rounded-md"
                       />
                     </div>
@@ -815,8 +850,8 @@ const Calculator = () => {
                     <input
                       type="tel"
                       name="mobile"
-                      value={formData.mobile}
-                      onChange={handleInputChange}
+                      value={formData.personalDetails.mobile}
+                      onChange={(e) => handleInputChange(e, "personalDetails")}
                       className="w-full p-2 border border-gray-300 rounded-md"
                       placeholder="+91 9876543210"
                     />
@@ -826,8 +861,8 @@ const Calculator = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
                     <textarea
                       name="address"
-                      value={formData.address}
-                      onChange={handleInputChange}
+                      value={formData.personalDetails.address}
+                      onChange={(e) => handleInputChange(e, "personalDetails")}
                       className="w-full p-2 border border-gray-300 rounded-md"
                       rows={3}
                     />
@@ -839,8 +874,8 @@ const Calculator = () => {
                       <input
                         type="text"
                         name="city"
-                        value={formData.city}
-                        onChange={handleInputChange}
+                        value={formData.personalDetails.city}
+                        onChange={(e) => handleInputChange(e, "personalDetails")}
                         className="w-full p-2 border border-gray-300 rounded-md"
                       />
                     </div>
@@ -849,8 +884,8 @@ const Calculator = () => {
                       <input
                         type="text"
                         name="state"
-                        value={formData.state}
-                        onChange={handleInputChange}
+                        value={formData.personalDetails.state}
+                        onChange={(e) => handleInputChange(e, "personalDetails")}
                         className="w-full p-2 border border-gray-300 rounded-md"
                       />
                     </div>
@@ -859,8 +894,8 @@ const Calculator = () => {
                       <input
                         type="text"
                         name="pinCode"
-                        value={formData.pinCode}
-                        onChange={handleInputChange}
+                        value={formData.personalDetails.pinCode}
+                        onChange={(e) => handleInputChange(e, "personalDetails")}
                         className="w-full p-2 border border-gray-300 rounded-md"
                       />
                     </div>
@@ -902,8 +937,8 @@ const Calculator = () => {
                           id="quarterly"
                           name="investmentPlan"
                           value="quarterly"
-                          checked={formData.investmentPlan === "quarterly"}
-                          onChange={handleInputChange}
+                          checked={formData.investmentPreferences.investmentPlan === "quarterly"}
+                          onChange={(e) => handleInputChange(e, "investmentPreferences")}
                           className="mr-2"
                         />
                         <label htmlFor="quarterly" className="text-sm">
@@ -916,8 +951,8 @@ const Calculator = () => {
                           id="tree"
                           name="investmentPlan"
                           value="tree"
-                          checked={formData.investmentPlan === "tree"}
-                          onChange={handleInputChange}
+                          checked={formData.investmentPreferences.investmentPlan === "tree"}
+                          onChange={(e) => handleInputChange(e, "investmentPreferences")}
                           className="mr-2"
                         />
                         <label htmlFor="tree" className="text-sm">
@@ -930,8 +965,8 @@ const Calculator = () => {
                           id="systematic"
                           name="investmentPlan"
                           value="systematic"
-                          checked={formData.investmentPlan === "systematic"}
-                          onChange={handleInputChange}
+                          checked={formData.investmentPreferences.investmentPlan === "systematic"}
+                          onChange={(e) => handleInputChange(e, "investmentPreferences")}
                           className="mr-2"
                         />
                         <label htmlFor="systematic" className="text-sm">
@@ -946,8 +981,8 @@ const Calculator = () => {
                     <input
                       type="number"
                       name="investmentAmount"
-                      value={formData.investmentAmount}
-                      onChange={handleInputChange}
+                      value={formData.investmentPreferences.investmentAmount}
+                      onChange={(e) => handleInputChange(e, "investmentPreferences")}
                       className="w-full p-2 border border-gray-300 rounded-md"
                     />
                     <p className="text-xs text-gray-500 mt-1">Minimum investment: ₹10,000</p>
@@ -957,8 +992,8 @@ const Calculator = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Investment Tenure</label>
                     <select
                       name="investmentTenure"
-                      value={formData.investmentTenure}
-                      onChange={handleInputChange}
+                      value={formData.investmentPreferences.investmentTenure}
+                      onChange={(e) => handleInputChange(e, "investmentPreferences")}
                       className="w-full p-2 border border-gray-300 rounded-md"
                     >
                       <option value="1 Year (4 Quarters)">1 Year (4 Quarters)</option>
@@ -973,8 +1008,8 @@ const Calculator = () => {
                     <input
                       type="text"
                       name="nomineeName"
-                      value={formData.nomineeName}
-                      onChange={handleInputChange}
+                      value={formData.investmentPreferences.nomineeName}
+                      onChange={(e) => handleInputChange(e, "investmentPreferences")}
                       className="w-full p-2 border border-gray-300 rounded-md"
                     />
                   </div>
@@ -983,8 +1018,8 @@ const Calculator = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Relationship with Nominee</label>
                     <select
                       name="relationship"
-                      value={formData.relationship}
-                      onChange={handleInputChange}
+                      value={formData.investmentPreferences.relationship}
+                      onChange={(e) => handleInputChange(e, "investmentPreferences")}
                       className="w-full p-2 border border-gray-300 rounded-md"
                     >
                       <option value="">Select relationship</option>
@@ -1046,8 +1081,8 @@ const Calculator = () => {
                     <input
                       type="text"
                       name="bankAccountNumber"
-                      value={formData.bankAccountNumber}
-                      onChange={handleInputChange}
+                      value={formData.kycDetails.bankAccountNumber}
+                      onChange={(e) => handleInputChange(e, "kycDetails")}
                       className="w-full p-2 border border-gray-300 rounded-md"
                     />
                   </div>
@@ -1057,8 +1092,8 @@ const Calculator = () => {
                     <input
                       type="text"
                       name="confirmAccountNumber"
-                      value={formData.confirmAccountNumber}
-                      onChange={handleInputChange}
+                      value={formData.kycDetails.confirmAccountNumber}
+                      onChange={(e) => handleInputChange(e, "kycDetails")}
                       className="w-full p-2 border border-gray-300 rounded-md"
                     />
                   </div>
@@ -1068,8 +1103,8 @@ const Calculator = () => {
                     <input
                       type="text"
                       name="ifscCode"
-                      value={formData.ifscCode}
-                      onChange={handleInputChange}
+                      value={formData.kycDetails.ifscCode}
+                      onChange={(e) => handleInputChange(e, "kycDetails")}
                       className="w-full p-2 border border-gray-300 rounded-md"
                       placeholder="SBIN0000123"
                     />
@@ -1084,8 +1119,8 @@ const Calculator = () => {
                           id="savings"
                           name="accountType"
                           value="savings"
-                          checked={formData.accountType === "savings"}
-                          onChange={handleInputChange}
+                          checked={formData.kycDetails.accountType === "savings"}
+                          onChange={(e) => handleInputChange(e, "kycDetails")}
                           className="mr-2"
                         />
                         <label htmlFor="savings" className="text-sm">
@@ -1098,8 +1133,8 @@ const Calculator = () => {
                           id="current"
                           name="accountType"
                           value="current"
-                          checked={formData.accountType === "current"}
-                          onChange={handleInputChange}
+                          checked={formData.kycDetails.accountType === "current"}
+                          onChange={(e) => handleInputChange(e, "kycDetails")}
                           className="mr-2"
                         />
                         <label htmlFor="current" className="text-sm">
@@ -1117,9 +1152,8 @@ const Calculator = () => {
                       <p className="text-xs text-center text-gray-500 mt-1">PDF, JPG or PNG (Max. 2MB)</p>
                       <input
                         type="file"
-                        className="hidden"
                         id="idProof"
-                        onChange={(e) => handleFileUpload(e, "idProof")}
+                        onChange={(e) => handleFileUpload(e, "kycDetails", "idProof")}
                       />
                       <label htmlFor="idProof" className="w-full cursor-pointer h-full absolute inset-0 opacity-0">
                         Upload ID Proof
@@ -1137,9 +1171,9 @@ const Calculator = () => {
                       <p className="text-xs text-center text-gray-500 mt-1">PDF, JPG or PNG (Max. 2MB)</p>
                       <input
                         type="file"
-                        className="hidden"
                         id="addressProof"
-                        onChange={(e) => handleFileUpload(e, "addressProof")}
+                        onChange={(e) => handleFileUpload(e, "kycDetails", "addressProof")}
+
                       />
                       <label htmlFor="addressProof" className="w-full cursor-pointer h-full absolute inset-0 opacity-0">
                         Upload Address Proof
