@@ -1111,7 +1111,7 @@ const Calculator = () => {
 
                   <div className="mb-6">
                     <label className="block text-sm font-medium text-gray-700 mb-2">ID Proof (PAN/Aadhaar)</label>
-                    <div className="border border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center justify-center">
+                    <div className="border border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center justify-center relative">
                       <Upload className="h-6 w-6 text-gray-400 mb-2" />
                       <p className="text-sm text-center text-gray-600">Click to upload or drag and drop</p>
                       <p className="text-xs text-center text-gray-500 mt-1">PDF, JPG or PNG (Max. 2MB)</p>
@@ -1131,7 +1131,7 @@ const Calculator = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Address Proof (Utility Bill/Passport)
                     </label>
-                    <div className="border border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center justify-center">
+                    <div className="border border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center justify-center relative">
                       <Upload className="h-6 w-6 text-gray-400 mb-2" />
                       <p className="text-sm text-center text-gray-600">Click to upload or drag and drop</p>
                       <p className="text-xs text-center text-gray-500 mt-1">PDF, JPG or PNG (Max. 2MB)</p>
